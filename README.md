@@ -77,3 +77,44 @@ Key: Authorization
 Value: Bearer {TOKEN}
 
 *STATUS: 200 OK*
+
+## Ejecutar el Proyecto
+
+1. Levantar toda la Infraestructura
+```PowerShell
+docker compose up -d
+```
+
+2. Verificar que todo este bien
+```PowerShell
+# Verificar ambos contenedores levantados
+docker ps
+
+# Verificar API tenga conexion a la base de datos
+docker logs api_transparencia
+```
+
+3. Protocolo de apagado
+```PowerShell
+# No es necesario eliminar Volumenes, solo detener los contenedores
+docker compose stop
+```
+
+4. Cambios en el esquema de DB
+Si se necesita añadir Tablas o columnas ejecutar siempre despues de modificar el schema.prisma
+
+```PowerShell
+# Migrar BD con los esquemas actualizados y guardados
+docker compose exec api npx prisma db push
+```
+
+5. Problemas de permisos o cache
+Si el código "no se actualiza" a pesar de que guardaste el archivo, la "llave maestra" que limpiará cualquier residuo de Docker sin borrar los datos en la base de datos.
+
+```PowerShell
+#Baja loscontenedores
+docker compose down
+
+# Reconstruye
+docker compose up -d --build
+```

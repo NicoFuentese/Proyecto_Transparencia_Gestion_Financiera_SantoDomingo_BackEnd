@@ -29,6 +29,9 @@ app.use('/api/usuario', require('./routes/userRoutes'));
 // Rutas públicas para datos municipales
 app.use('/api', require('./routes/publicRoutes'));
 
+// Rutas administrativas para gestión de contratos (solo para ADMIN)
+app.use('/api/admin', require('./routes/adminRoutes'));
+
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
 
