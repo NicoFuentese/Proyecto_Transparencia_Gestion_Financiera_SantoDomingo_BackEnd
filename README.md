@@ -40,3 +40,40 @@ npm install -D nodemon prisma
 
 ### 4. Inicializar Prisma (esto creará la carpeta /prisma y el archivo schema.prisma)
 npx prisma init
+
+## Pruebas con POSTMAN
+
+### Prueba de Usuario Registrado (POST)
+
+*URL:http://localhost:3000/api/auth/register*
+*Body - JSON*:
+```
+{
+    "email": "admin@santodomingo.cl",
+    "password": "AdminPassword2026!",
+    "nombre": "Director de Finanzas"
+}
+```
+*STATUS: 201 Created*
+
+### Prueba de inicio de sesion (POST)
+Esto nos entregara un Token.
+
+*URL:http://localhost:3000/api/auth/login*
+*Body - JSON*:
+```
+{
+    "email": "admin@santodomingo.cl",
+    "password": "AdminPassword2026!",
+    "nombre": "Director de Finanzas"
+}
+```
+*STATUS: 200 OK*
+
+### Prueba de usuario autenticado (GET)
+*URL:http://localhost:3000/api/usuario/perfil*
+*Headers*:
+Key: Authorization
+Value: Bearer {TOKEN}
+
+*STATUS: 200 OK*
