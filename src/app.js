@@ -22,8 +22,12 @@ app.get('/api/health', (req, res) => {
 
 // Rutas de autenticación
 app.use('/api/auth', authRoutes);
+
+// Rutas protegidas para usuarios autenticados
 app.use('/api/usuario', require('./routes/userRoutes'));
 
+// Rutas públicas para datos municipales
+app.use('/api', require('./routes/publicRoutes'));
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
