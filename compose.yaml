@@ -27,11 +27,11 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
       - PORT=${PORT}
-    volumes:
+    #volumes:
       # Sincronización local para desarrollo (Hot-Reload)
-      - .:/usr/src/app
+     # - .:/usr/src/app
       # Ignorar la carpeta node_modules local para usar la del contenedor
-      - /usr/src/app/node_modules
+      #- /usr/src/app/node_modules
     depends_on:
       - db
 
