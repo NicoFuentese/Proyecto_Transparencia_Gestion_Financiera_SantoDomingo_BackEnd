@@ -20,11 +20,13 @@
   },
   "homepage": "https://github.com/NicoFuentese/Proyecto_Transparencia_Gestion_Financiera_SantoDomingo_BackEnd#readme",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "@prisma/config": "^7.8.0",

@@ -18,7 +18,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     container_name: api_transparencia
     restart: unless-stopped
     ports:
@@ -28,10 +28,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - PORT=${PORT}
     #volumes:
-      # Sincronización local para desarrollo (Hot-Reload)
-     # - .:/usr/src/app
-      # Ignorar la carpeta node_modules local para usar la del contenedor
-      #- /usr/src/app/node_modules
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - db
 

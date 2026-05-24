@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
+//importar rutas de autenticacion
+const authRoutes = require('./routes/authRoutes');
+
 const app = express();
 
 // Middlewares globales de seguridad y formato
@@ -15,6 +18,9 @@ app.get('/api/health', (req, res) => {
         message: 'API del Portal de Transparencia operando correctamente'
     });
 });
+
+// Rutas de autenticación
+app.use('/api/auth', authRoutes);
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
