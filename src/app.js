@@ -1,3 +1,4 @@
+// PRUEBA_SISTEMA_ARCHIVOS_2026
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');

@@ -27,7 +27,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
       - PORT=${PORT}
-    #volumes:
+    volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
