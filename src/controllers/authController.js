@@ -1,3 +1,5 @@
+const { sendSuccess, sendError } = require('../utils/responseHandler');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = require('../config/db');
@@ -7,10 +9,21 @@ const register = async (req, res) => {
     try {
         const { email, password, nombre } = req.body;
 
+        if (!email || !password || !nombre) {
+            return sendError(res, 400, 'Faltan campos obligatorios (email, password, nombre)');
+        }
+        if (password.length < 6) {
+            return sendError(res, 400, 'La contraseña debe tener al menos 6 caracteres');
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return sendError(res, 400, 'Formato de correo electrónico inválido');
+        }
+
         // 1. Verificar si el usuario ya existe
         const usuarioExistente = await prisma.usuario.findUnique({ where: { email } });
         if (usuarioExistente) {
-            return res.status(400).json({ error: 'El correo ya está registrado en el municipio' });
+            return sendError(res, 400, 'El correo ya está registrado en el municipio');
         }
 
         // 2. Encriptar la contraseña (seguridad JWT)
@@ -27,14 +40,11 @@ const register = async (req, res) => {
             }
         });
 
-        res.status(201).json({ 
-            mensaje: 'Funcionario registrado con éxito',
-            usuario: { id: nuevoUsuario.id, email: nuevoUsuario.email, nombre: nuevoUsuario.nombre }
-        });
+        return sendSuccess(res, 201, { id: nuevoUsuario.id, email: nuevoUsuario.email, nombre: nuevoUsuario.nombre }, 'Funcionario registrado con éxito');
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error interno del servidor al registrar usuario' });
+        return sendError(res, 500, 'Error interno del servidor al registrar usuario');
     }
 };
 
@@ -46,13 +56,13 @@ const login = async (req, res) => {
         // 1. Buscar al usuario
         const usuario = await prisma.usuario.findUnique({ where: { email } });
         if (!usuario) {
-            return res.status(401).json({ error: 'Credenciales inválidas (email)' });
+            return sendError(res, 401, 'Credenciales inválidas (email)');
         }
 
         // 2. Verificar la contraseña encriptada
         const passwordValido = await bcrypt.compare(password, usuario.password);
         if (!passwordValido) {
-            return res.status(401).json({ error: 'Credenciales inválidas (password)' });
+            return sendError(res, 401, 'Credenciales inválidas (password)');
         }
 
         // 3. Generar el token JWT
@@ -62,15 +72,15 @@ const login = async (req, res) => {
             { expiresIn: '8h' }
         );
 
-        res.status(200).json({
-            mensaje: 'Autenticación exitosa',
+        const responseData = {
             token,
             usuario: { email: usuario.email, nombre: usuario.nombre, rol: usuario.rol }
-        });
+        };
+        return sendSuccess(res, 200, responseData, 'Autenticación exitosa');
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error interno del servidor al iniciar sesión' });
+        return sendError(res, 500, 'Error interno del servidor al iniciar sesión');
     }
 };
 

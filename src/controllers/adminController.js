@@ -19,6 +19,27 @@ const adminController = {
         }
     },
 
+    async actualizarDepartamento(req, res) {
+        try {
+            const { id } = req.params;
+            const { nombre, descripcion } = req.body;
+            const actualizado = await prisma.departamento.update({
+                where: { id: parseInt(id) },
+                data: { nombre, descripcion }
+            });
+            return sendSuccess(res, 200, actualizado, 'Departamento actualizado correctamente.');
+        } catch (error) {
+            console.error('[Error en actualizarDepartamento]:', error);
+            if (error.code === 'P2025') {
+                return sendError(res, 404, 'El departamento no fue encontrado.');
+            }
+            if (error.code === 'P2002') {
+                return sendError(res, 400, 'El nombre del departamento ya existe.');
+            }
+            return sendError(res, 500, 'Error interno del servidor al actualizar el departamento.');
+        }
+    },
+
     async crearPresupuesto(req, res) {
         try {
             const { ano, montoAsignado, departamentoId } = req.body;
