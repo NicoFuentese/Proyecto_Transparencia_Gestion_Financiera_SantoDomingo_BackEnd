@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 const adminController = {
     async crearDepartamento(req, res) {
@@ -7,14 +8,14 @@ const adminController = {
             const nuevo = await prisma.departamento.create({
                 data: { nombre, descripcion }
             });
-            res.status(201).json(nuevo);
+            return sendSuccess(res, 201, nuevo, 'Departamento creado correctamente.');
         } catch (error) {
             console.error('[Error en crearDepartamento]:', error);
             // Manejo específico para errores de unicidad (nombre duplicado)
             if (error.code === 'P2002') {
-                return res.status(400).json({ error: 'El nombre del departamento ya existe.' });
+                return sendError(res, 400, 'El nombre del departamento ya existe.');
             }
-            res.status(500).json({ error: 'Error interno del servidor al crear el departamento.' });
+            return sendError(res, 500, 'Error interno del servidor al crear el departamento.');
         }
     },
 
@@ -29,13 +30,13 @@ const adminController = {
                     departamentoId 
                 }
             });
-            res.status(201).json(nuevo);
+            return sendSuccess(res, 201, nuevo, 'Presupuesto creado correctamente.');
         } catch (error) {
             console.error('[Error en crearPresupuesto]:', error);
             if (error.code === 'P2003') {
-                return res.status(400).json({ error: 'El ID del departamento no existe.' });
+                return sendError(res, 400, 'El ID del departamento no existe.');
             }
-            res.status(500).json({ error: 'Error interno al registrar el presupuesto.' });
+            return sendError(res, 500, 'Error interno al registrar el presupuesto.');
         }
     },
 
@@ -52,10 +53,10 @@ const adminController = {
                     departamentoId 
                 }
             });
-            res.status(201).json(nuevo);
+            return sendSuccess(res, 201, nuevo, 'Contrato creado correctamente.');
         } catch (error) {
             console.error('[Error en crearContrato]:', error);
-            res.status(500).json({ error: 'Error interno al registrar el contrato.' });
+            return sendError(res, 500, 'Error interno al registrar el contrato.');
         }
     },
 
@@ -65,13 +66,13 @@ const adminController = {
             await prisma.contrato.delete({
                 where: { id: parseInt(id) }
             });
-            res.status(200).json({ mensaje: 'Contrato eliminado correctamente.' });
+            return sendSuccess(res, 200, null, 'Contrato eliminado correctamente.');
         } catch (error) {
             console.error('[Error en eliminarContrato]:', error);
             if (error.code === 'P2025') {
-                return res.status(404).json({ error: 'El contrato no fue encontrado.' });
+                return sendError(res, 404, 'El contrato no fue encontrado.');
             }
-            res.status(500).json({ error: 'Error interno al eliminar el contrato.' });
+            return sendError(res, 500, 'Error interno al eliminar el contrato.');
         }
     }
 };

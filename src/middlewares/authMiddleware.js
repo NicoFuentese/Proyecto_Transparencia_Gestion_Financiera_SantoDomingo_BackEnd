@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
+const { sendError } = require('../utils/responseHandler');
 
 const protegerRuta = (req, res, next) => {
     // 1. Obtener el token del header Authorization
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Acceso denegado: Token no proporcionado' });
+        return sendError(res, 401, 'Acceso denegado: Token no proporcionado');
     }
 
     const token = authHeader.split(' ')[1];
@@ -16,7 +17,7 @@ const protegerRuta = (req, res, next) => {
         req.usuario = verificado; // Inyectamos los datos del usuario en la petición
         next(); // Continuar al controlador
     } catch (error) {
-        res.status(403).json({ error: 'Token inválido o expirado' });
+        return sendError(res, 403, 'Token inválido o expirado');
     }
 };
 
