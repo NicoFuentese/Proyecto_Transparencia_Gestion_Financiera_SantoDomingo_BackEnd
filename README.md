@@ -1,120 +1,134 @@
-# Proyecto Transferencia Gestion Financiera
+# 🏛️ Portal de Transparencia y Gestión Financiera - Santo Domingo
 
-## Objetivo
+Este sistema es una API REST robusta diseñada para gestionar y exponer la información financiera municipal, asegurando la transparencia en la administración de presupuestos, departamentos y contratos públicos. Implementa un modelo de seguridad basado en roles (RBAC) y autenticación mediante JSON Web Tokens (JWT).
 
+## 🚀 Stack Tecnológico
 
-## Stack Tecnologico
-- Node.js (Express)
-- PostgreSQL
-- Prisma ORM
-- Docker
+- **Runtime:** Node.js (Express)
+- **Base de Datos:** PostgreSQL
+- **ORM:** Prisma
+- **Infraestructura:** Docker & Docker Compose
+- **Seguridad:** bcrypt (Hashing) & jsonwebtoken (JWT)
 
-## Estructura del Proyecto
+## 📂 Arquitectura del Proyecto
 
-```
+```text
 transparencia-backend/
 ├── prisma/
-│   └── schema.prisma         # Modelo de datos y configuración del ORM
+│   └── schema.prisma         # Definición del modelo de datos relacional
 ├── src/
-│   ├── config/               # Variables de entorno y conexión a DB
-│   ├── controllers/          # Lógica de negocio (authController, presupuestoController)
-│   ├── middlewares/          # Interceptores (validarJWT, errorHandler)
-│   ├── routes/               # Definición de endpoints RESTful
-│   ├── utils/                # Funciones auxiliares (hash, generador JWT)
-│   └── app.js                # Inicialización del servidor Express
-├── .env                      # Credenciales de BD y JWT Secret (NO subir a GitHub)
-├── .gitignore
-└── package.json
+│   ├── config/               # Configuración de base de datos (db.js)
+│   ├── controllers/          # Lógica de negocio:
+│   │   ├── authController.js # Registro y login de usuarios
+│   │   ├── adminController.js # Gestión administrativa (CRUD)
+│   │   └── publicController.js # Acceso público a datos
+│   ├── middlewares/          # Capas de seguridad:
+│   │   ├── authMiddleware.js # Validación de token JWT
+│   │   └── adminMiddleware.js # Verificación de rol ADMIN
+│   ├── routes/               # Definición de endpoints:
+│   │   ├── authRoutes.js     # /api/auth/...
+│   │   ├── publicRoutes.js   # /api/... (Acceso libre)
+│   │   ├── userRoutes.js     # /api/usuario/... (Acceso autenticado)
+│   │   └── adminRoutes.js    # /api/admin/... (Acceso restringido)
+│   ├── utils/                # Manejadores de respuesta estandarizados
+│   └── app.js                # Punto de entrada y configuración de Express
+├── .env                      # Variables de entorno (Secretos y Credenciales)
+└── package.json              # Dependencias y scripts del proyecto
 ```
 
-## Comandos para el proyecto
+## 🛠️ Guía de Instalación y Ejecución
 
-### 1. Inicializar el proyecto Node.js (si aún no existe package.json)
-npm init -y
-
-### 2. Instalar dependencias core y de seguridad exigidas en la rúbrica
-npm install express cors dotenv bcrypt jsonwebtoken
-
-### 3. Instalar dependencias de desarrollo y el CLI de Prisma
-npm install -D nodemon prisma
-
-### 4. Inicializar Prisma (esto creará la carpeta /prisma y el archivo schema.prisma)
-npx prisma init
-
-## Pruebas con POSTMAN
-
-### Prueba de Usuario Registrado (POST)
-
-*URL:http://localhost:3000/api/auth/register*
-*Body - JSON*:
+### 1. Configuración de Entorno
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+```env
+PORT=3000
+DATABASE_URL="postgresql://user:password@localhost:5432/transparencia_db?schema=public"
+JWT_SECRET="tu_clave_secreta_super_segura_aqui"
 ```
-{
-    "email": "admin@santodomingo.cl",
-    "password": "AdminPassword2026!",
-    "nombre": "Director de Finanzas"
-}
-```
-*STATUS: 201 Created*
 
-### Prueba de inicio de sesion (POST)
-Esto nos entregara un Token.
-
-*URL:http://localhost:3000/api/auth/login*
-*Body - JSON*:
-```
-{
-    "email": "admin@santodomingo.cl",
-    "password": "AdminPassword2026!",
-    "nombre": "Director de Finanzas"
-}
-```
-*STATUS: 200 OK*
-
-### Prueba de usuario autenticado (GET)
-*URL:http://localhost:3000/api/usuario/perfil*
-*Headers*:
-Key: Authorization
-Value: Bearer {TOKEN}
-
-*STATUS: 200 OK*
-
-## Ejecutar el Proyecto
-
-1. Levantar toda la Infraestructura
-```PowerShell
+### 2. Levantamiento de Infraestructura
+Utiliza Docker para desplegar la base de datos y la API:
+```powershell
+# Levantar contenedores en segundo plano
 docker compose up -d
-```
 
-2. Verificar que todo este bien
-```PowerShell
-# Verificar ambos contenedores levantados
+# Verificar estado de los servicios
 docker ps
 
-# Verificar API tenga conexion a la base de datos
+# Ver logs de la API para confirmar conexión a BD
 docker logs api_transparencia
 ```
 
-3. Protocolo de apagado
-```PowerShell
-# No es necesario eliminar Volumenes, solo detener los contenedores
-docker compose stop
-```
-
-4. Cambios en el esquema de DB
-Si se necesita añadir Tablas o columnas ejecutar siempre despues de modificar el schema.prisma
-
-```PowerShell
-# Migrar BD con los esquemas actualizados y guardados
+### 3. Sincronización de Base de Datos
+Si realizas cambios en el archivo `prisma/schema.prisma`, sincroniza la base de datos sin perder el estado actual:
+```powershell
 docker compose exec api npx prisma db push
 ```
 
-5. Problemas de permisos o cache
-Si el código "no se actualiza" a pesar de que guardaste el archivo, la "llave maestra" que limpiará cualquier residuo de Docker sin borrar los datos en la base de datos.
-
-```PowerShell
-#Baja loscontenedores
+### 4. Mantenimiento y Reinicio
+Para aplicar cambios profundos en la configuración o dependencias:
+```powershell
+# Detener y eliminar contenedores
 docker compose down
 
-# Reconstruye
+# Reconstruir imágenes y levantar
 docker compose up -d --build
 ```
+
+## 🛣️ Referencia de la API
+
+### 🔐 Autenticación (`/api/auth`)
+| Método | Endpoint | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/register` | Público | Registra un nuevo funcionario (ADMIN por defecto). |
+| `POST` | `/login` | Público | Valida credenciales y retorna un Token JWT. |
+
+### 🌍 Acceso Público (`/api`)
+| Método | Endpoint | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/departamentos` | Público | Lista todos los departamentos municipales. |
+| `GET` | `/presupuestos` | Público | Lista presupuestos con detalle de departamento. |
+| `GET` | `/contratos` | Público | Lista contratos públicos y sus proveedores. |
+
+### 👤 Usuario Autenticado (`/api/usuario`)
+| Método | Endpoint | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/perfil` | JWT | Retorna la información del usuario autenticado. |
+
+### 🛡️ Administración (`/api/admin`)
+| Método | Endpoint | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/departamentos` | JWT + ADMIN | Crea un nuevo departamento municipal. |
+| `POST` | `/presupuestos` | JWT + ADMIN | Asigna un presupuesto a un departamento. |
+| `POST` | `/contratos` | JWT + ADMIN | Registra un nuevo contrato público. |
+| `DELETE` | `/contratos/:id` | JWT + ADMIN | Elimina un contrato mediante su ID. |
+
+## 🧪 Suite de Pruebas en Postman (Estándar de Industria)
+
+### ⚙️ Configuración de Entorno
+Crea un entorno en Postman llamado `Transparencia_Dev` con las siguientes variables:
+- `url`: `http://localhost:3000/api`
+- `jwt_token`: (vacío inicialmente)
+
+### 🤖 Automatización de Tokens
+Para evitar copiar el token manualmente, añade el siguiente script en la pestaña **Tests** de la petición `POST /auth/login`:
+
+```javascript
+// Captura automática del token JWT
+if (pm.response.code === 200) {
+    const response = pm.response.json();
+    if (response.token) {
+        pm.environment.set("jwt_token", response.token);
+        console.log("Token JWT almacenado en el entorno correctamente.");
+    }
+}
+```
+
+### 🛡️ Matriz de Validación de Seguridad
+
+| Prueba | Acción | Header Authorization | Resultado Esperado |
+| :--- | :--- | :--- | :--- |
+| **Flujo Feliz** | Login $\rightarrow$ Perfil | `Bearer {{jwt_token}}` | `200 OK` |
+| **Acceso No Autorizado** | GET `/usuario/perfil` | (Vacío) | `401 Unauthorized` |
+| **Token Inválido** | GET `/usuario/perfil` | `Bearer token_falso` | `403 Forbidden` |
+| **Escalada de Privilegios** | POST `/admin/contratos` | `Bearer {{token_usuario}}` | `403 Forbidden` (si el rol $\neq$ ADMIN) |
