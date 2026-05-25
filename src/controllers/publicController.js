@@ -1,29 +1,31 @@
 const prisma = require('../config/db');
+const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 const obtenerDepartamentos = async (req, res) => {
     try {
         const departamentos = await prisma.departamento.findMany();
-        res.json(departamentos);
+        return sendSuccess(res, 200, departamentos);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener departamentos' });
+        return sendError(res, 500, 'Error al obtener departamentos');
     }
 };
 
 const obtenerPresupuestos = async (req, res) => {
     try {
         const presupuestos = await prisma.presupuesto.findMany({ include: { departamento: true } });
-        res.json(presupuestos);
+        return sendSuccess(res, 200, presupuestos);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener presupuestos' });
+        return sendError(res, 500, 'Error al obtener presupuestos');
     }
 };
+
 
 const obtenerContratos = async (req, res) => {
     try {
         const contratos = await prisma.contrato.findMany({ include: { departamento: true } });
-        res.json(contratos);
+        return sendSuccess(res, 200, contratos);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener contratos' });
+        return sendError(res, 500, 'Error al obtener contratos');
     }
 };
 
