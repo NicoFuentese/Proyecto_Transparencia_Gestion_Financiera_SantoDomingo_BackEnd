@@ -61,6 +61,24 @@ const adminController = {
         }
     },
 
+    async actualizarPresupuesto(req, res) {
+        try {
+            const { id } = req.params;
+            const { ano, montoAsignado, montoEjecutado } = req.body;
+            const actualizado = await prisma.presupuesto.update({
+                where: { id: parseInt(id) },
+                data: { ano, montoAsignado, montoEjecutado }
+            });
+            return sendSuccess(res, 200, actualizado, 'Presupuesto actualizado correctamente.');
+        } catch (error) {
+            console.error('[Error en actualizarPresupuesto]:', error);
+            if (error.code === 'P2025') {
+                return sendError(res, 404, 'El presupuesto no fue encontrado.');
+            }
+            return sendError(res, 500, 'Error interno al actualizar el presupuesto.');
+        }
+    },
+
     async crearContrato(req, res) {
         try {
             const { titulo, proveedor, monto, fechaInicio, departamentoId } = req.body;
@@ -78,6 +96,31 @@ const adminController = {
         } catch (error) {
             console.error('[Error en crearContrato]:', error);
             return sendError(res, 500, 'Error interno al registrar el contrato.');
+        }
+    },
+
+    async actualizarContrato(req, res) {
+        try {
+            const { id } = req.params;
+            const { titulo, proveedor, monto, fechaInicio, fechaTermino, departamentoId } = req.body;
+            const actualizado = await prisma.contrato.update({
+                where: { id: parseInt(id) },
+                data: { 
+                    titulo, 
+                    proveedor, 
+                    monto, 
+                    fechaInicio: fechaInicio ? new Date(fechaInicio) : undefined,
+                    fechaTermino: fechaTermino ? new Date(fechaTermino) : undefined,
+                    departamentoId 
+                }
+            });
+            return sendSuccess(res, 200, actualizado, 'Contrato actualizado correctamente.');
+        } catch (error) {
+            console.error('[Error en actualizarContrato]:', error);
+            if (error.code === 'P2025') {
+                return sendError(res, 404, 'El contrato no fue encontrado.');
+            }
+            return sendError(res, 500, 'Error interno al actualizar el contrato.');
         }
     },
 

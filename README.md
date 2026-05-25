@@ -80,8 +80,8 @@ docker compose up -d --build
 ### 🔐 Autenticación (`/api/auth`)
 | Método | Endpoint | Acceso | Descripción |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/register` | Público | Registra un nuevo funcionario (ADMIN por defecto). |
-| `POST` | `/login` | Público | Valida credenciales y retorna un Token JWT. |
+| `POST` | `/register` | Público | Registra un funcionario. **Validaciones:** Email válido, Pass $\ge$ 6 chars, campos obligatorios. |
+| `POST` | `/login` | Público | Valida credenciales y retorna JWT. **Validaciones:** Campos obligatorios. |
 
 ### 🌍 Acceso Público (`/api`)
 | Método | Endpoint | Acceso | Descripción |
@@ -99,8 +99,11 @@ docker compose up -d --build
 | Método | Endpoint | Acceso | Descripción |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/departamentos` | JWT + ADMIN | Crea un nuevo departamento municipal. |
+| `PUT` | `/departamentos/:id` | JWT + ADMIN | Actualiza la información de un departamento. |
 | `POST` | `/presupuestos` | JWT + ADMIN | Asigna un presupuesto a un departamento. |
+| `PUT` | `/presupuestos/:id` | JWT + ADMIN | Actualiza montos o año de un presupuesto. |
 | `POST` | `/contratos` | JWT + ADMIN | Registra un nuevo contrato público. |
+| `PUT` | `/contratos/:id` | JWT + ADMIN | Actualiza detalles de un contrato existente. |
 | `DELETE` | `/contratos/:id` | JWT + ADMIN | Elimina un contrato mediante su ID. |
 
 ## 🧪 Suite de Pruebas en Postman (Estándar de Industria)

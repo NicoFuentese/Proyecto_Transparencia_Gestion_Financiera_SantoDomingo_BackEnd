@@ -53,6 +53,10 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        if (!email || !password) {
+            return sendError(res, 400, 'El email y la contraseña son obligatorios');
+        }
+
         // 1. Buscar al usuario
         const usuario = await prisma.usuario.findUnique({ where: { email } });
         if (!usuario) {
