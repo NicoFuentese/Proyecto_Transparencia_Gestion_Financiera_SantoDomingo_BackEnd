@@ -3,9 +3,10 @@ const router = express.Router();
 const protegerRuta = require('../middlewares/authMiddleware');
 const verificarAdmin = require('../middlewares/adminMiddleware');
 const adminController = require('../controllers/adminController');
-const prisma = require('../config/db');
 
-// Inyección de middlewares a nivel de enrutador (aplica a todas las rutas debajo)
+const validateSchema = require('../middlewares/validateMiddleware');
+const { crearDepartamentoSchema, crearContratoSchema, idParamSchema } = require('../schemas/adminSchemas');
+
 router.use(protegerRuta);
 router.use(verificarAdmin);
 

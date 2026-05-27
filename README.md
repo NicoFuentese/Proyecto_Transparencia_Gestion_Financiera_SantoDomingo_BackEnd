@@ -15,24 +15,35 @@ Este sistema es una API REST robusta diseñada para gestionar y exponer la infor
 ```text
 transparencia-backend/
 ├── prisma/
-│   └── schema.prisma         # Definición del modelo de datos relacional
+│   ├── schema.prisma         # Definición del modelo de datos relacional
+│   └── migrations/           # Historial de migraciones de base de datos
 ├── src/
-│   ├── config/               # Configuración de base de datos (db.js)
+│   ├── config/               # Configuración de base de datos:
+│   │   └── db.js             # Conexión y cliente de Prisma
 │   ├── controllers/          # Lógica de negocio:
 │   │   ├── authController.js # Registro y login de usuarios
 │   │   ├── adminController.js # Gestión administrativa (CRUD)
 │   │   └── publicController.js # Acceso público a datos
-│   ├── middlewares/          # Capas de seguridad:
+│   ├── middlewares/          # Capas de seguridad y validación:
 │   │   ├── authMiddleware.js # Validación de token JWT
-│   │   └── adminMiddleware.js # Verificación de rol ADMIN
+│   │   ├── adminMiddleware.js # Verificación de rol ADMIN
+│   │   └── validateMiddleware.js # Validación de esquemas de entrada
 │   ├── routes/               # Definición de endpoints:
 │   │   ├── authRoutes.js     # /api/auth/...
 │   │   ├── publicRoutes.js   # /api/... (Acceso libre)
 │   │   ├── userRoutes.js     # /api/usuario/... (Acceso autenticado)
 │   │   └── adminRoutes.js    # /api/admin/... (Acceso restringido)
-│   ├── utils/                # Manejadores de respuesta estandarizados
+│   ├── schemas/              # Esquemas de validación:
+│   │   └── adminSchemas.js   # Reglas de validación para admin
+│   ├── utils/                # Utilidades globales:
+│   │   └── responseHandler.js # Estandarización de respuestas HTTP
 │   └── app.js                # Punto de entrada y configuración de Express
+├── dockerfile                # Configuración de la imagen de Node.js
+├── compose.yaml              # Orquestación de servicios (API + DB)
+├── prisma.config.ts          # Configuración adicional de Prisma
 ├── .env                      # Variables de entorno (Secretos y Credenciales)
+├── AGENTS.md                 # Guía de planificación y tareas para agentes
+├── .gitignore                # Archivos excluidos del control de versiones
 └── package.json              # Dependencias y scripts del proyecto
 ```
 
