@@ -7,7 +7,7 @@ const prisma = require('../config/db');
 // Registro de Administradores Municipales
 const register = async (req, res) => {
     try {
-        const { email, password, nombre } = req.body;
+        const { email, password, nombre, rol } = req.body;
 
         if (!email || !password || !nombre) {
             return sendError(res, 400, 'Faltan campos obligatorios (email, password, nombre)');
@@ -30,13 +30,15 @@ const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        const rolUsuario = rol ? rol.toUpperCase() : 'ADMIN';
+
         // 3. Crear el usuario en PostgreSQL
         const nuevoUsuario = await prisma.usuario.create({
             data: {
                 email,
                 password: hashedPassword,
                 nombre,
-                rol: 'ADMIN' // Por defecto, asignamos rol de administrador
+                rol: rolUsuario
             }
         });
 
