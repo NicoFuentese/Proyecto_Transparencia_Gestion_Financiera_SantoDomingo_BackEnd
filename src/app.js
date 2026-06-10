@@ -9,7 +9,25 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 // Middlewares globales de seguridad y formato
-app.use(cors()); // Implementación CORS
+
+//lista blanca de dominios permitidos para CORS
+const origenesPermitidos = ['http://localhost:8080', 'http://localhost:5173'];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || origenesPermitidos.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Acceso denegado por políticas de CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // Solo permitimos estos headers
+    credentials: true
+};
+
+app.use(cors(corsOptions)); // Implementación CORS
+
 app.use(express.json()); // Parseo de JSON para los endpoints REST
 
 // Ruta de comprobación de estado
