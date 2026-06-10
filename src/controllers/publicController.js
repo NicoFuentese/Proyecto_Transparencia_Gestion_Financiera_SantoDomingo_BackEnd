@@ -22,10 +22,34 @@ const obtenerPresupuestos = async (req, res) => {
 
 const obtenerContratos = async (req, res) => {
     try {
-        const contratos = await prisma.contrato.findMany({ include: { departamento: true } });
-        return sendSuccess(res, 200, contratos);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const [contratos, totalRegistros] = await Promise.all([
+            prisma.contrato.findMany({
+                skip: skip,
+                take: limit,
+                include: { departamento: true },
+                orderBy: { fechaInicio: 'desc' }
+            }),
+            prisma.contrato.count()
+        ]);
+
+        const paginacionData = {
+            items: contratos,
+            meta: {
+                total: totalRegistros,
+                page: page,
+                limit: limit,
+                totalPages: Math.ceil(totalRegistros / limit)
+            }
+        };
+
+        return sendSuccess(res, 200, paginacionData);
     } catch (error) {
-        return sendError(res, 500, 'Error al obtener contratos');
+        console.error('[Error en obtenerContratos]:', error);
+        return sendError(res, 500, 'Error al obtener contratos paginados');
     }
 };
 
